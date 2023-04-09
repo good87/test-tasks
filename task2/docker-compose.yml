@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    restart: always
+
+
+###Определить наш сервис и БД pgql

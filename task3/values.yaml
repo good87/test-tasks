@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: myapp
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: myapp.local
+      paths:
+        - path: /
+
+postgresql:
+  enabled: true
+  postgresqlUsername: myuser
+  postgresqlPassword: mypassword
+  postgresqlDatabase: mydatabase
+  service:
+    port: 5432
+###Значения по умолчанию для нашего helm-чарта

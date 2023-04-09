@@ -1,0 +1,16 @@
+all:
+  hosts:
+    - 192.168.0.1
+  vars:
+    ansible_user: root
+    ansible_ssh_private_key_file: /path/to/private/key
+    kubernetes_namespace: postgres
+    postgres_chart_name: postgresql
+    postgres_database_name: mydb
+    postgres_username: myuser
+    postgres_password: mypassword
+
+
+
+###Мы указываем IP-адрес нашего хоста Kubernetes и путь к приватному ключу SSH.
+##Также мы устанавливаем некоторые переменные, которые будут использоваться в нашем playbook.

@@ -1,0 +1,48 @@
+- hosts: all
+  become: true
+
+  roles:
+    - geerlingguy.kubernetes
+
+  tasks:
+    - name: Add helm repo
+      community.kubernetes.helm_repository:
+        name: bitnami
+        repository_url: https://charts.bitnami.com/bitnami
+
+    - name: Install PostgreSQL chart
+      community.kubernetes.helm:
+        name: "{{ postgres_chart_name }}"
+        chart_repo: bitnami/postgresql
+        chart_version: 10.3.14
+        release_namespace: "{{ kubernetes_namespace }}"
+        release_name: "{{ postgres_chart_name }}"
+        values:
+          postgresqlDatabase: "{{ postgres_database_name }}"
+          postgresqlUsername: "{{ postgres_username }}"
+          postgresqlPassword: "{{ postgres_password }}"
+
+    - name: Create table in PostgreSQL
+      community.kubernetes.k8s:
+        api_version: batch/v1
+        kind: Job
+        namespace: "{{ kubernetes_namespace }}"
+        name: create-table
+        state: present
+        definition:
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: create-table
+            namespace: "{{ kubernetes_namespace }}"
+          spec:
+            template:
+              spec:
+                containers:
+                  - name: postgresql
+                    image: bitnami/postgresql:10.3.14
+                    env:
+                      - name: PGPASSWORD
+                        value: "{{ postgres_password }}"
+                    command: [ "psql", "-U", "{{ postgres_username }}", "-c", "CREATE TABLE IF NOT EXISTS test (id SERIAL PRIMARY KEY, name VARCHAR(255));" ]
+                restartPolicy: Never

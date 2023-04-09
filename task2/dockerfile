@@ -1,0 +1,21 @@
+FROM python:3.9-slim-buster
+
+# Установить необходимые библиотеки
+RUN pip install flask psycopg2-binary
+
+# Скопировать приложение в контейнер
+WORKDIR /app
+COPY app.py .
+
+# Установить переменные окружения для базы данных
+ENV POSTGRES_HOST postgres
+ENV POSTGRES_PORT 5432
+ENV POSTGRES_DB postgres
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD password
+
+# Открыть порт для входящих запросов
+EXPOSE 5000
+
+# Запустить приложение
+CMD ["python", "app.py"]
